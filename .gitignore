@@ -4,10 +4,10 @@
 .\#*
 *.swp
 *.swo
+.idea
 
 src/*.js
 test/*.js
 
 lib/
 node_modules/
-
