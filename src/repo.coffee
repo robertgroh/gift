@@ -466,7 +466,7 @@ module.exports = class Repo
     @status (err, status) =>
       return callback err if err
       @git "pull", {}, [remote, branch], (err, stdout, stderr) =>
-        return callback stderr if err
+        return callback (stdout + stderr) if err
         return callback null
 
   # Internal: Parse the list of files from `git ls-files`
