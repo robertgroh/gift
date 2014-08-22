@@ -18,20 +18,21 @@
   "main": "./lib/index",
   "scripts": {
     "test": "mocha --compilers coffee:'./node_modules/coffee-script/lib/coffee-script/register'",
-    "prepublish": "node_modules/coffee-script/bin/coffee -o lib -c src"
+    "prepublish": "node_modules/coffee-script/bin/coffee -o lib -c src",
+    "postinstall": "node_modules/coffee-script/bin/coffee -o lib -c src"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/notatestuser/gift.git"
   },
   "dependencies": {
-    "underscore": "1.x.x"
+    "underscore": "1.x.x",
+    "coffee-script": "~1.7.1"
   },
   "devDependencies": {
     "should": "~4.0.4",
     "mocha": "~1.20.1",
     "sinon": "~1.7.3",
-    "coffee-script": "~1.7.1",
     "fs-extra": "~0.9.1"
   },
   "engines": {
