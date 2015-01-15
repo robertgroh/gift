@@ -11,12 +11,12 @@ Status = require './status'
 {Ref, Head} = require './ref'
 
 module.exports = class Repo
-  constructor: (@path, @bare) ->
+  constructor: (@path, @bare, @git_options) ->
     if @bare
       @dot_git = @path
     else
       @dot_git = "#{@path}/.git"
-    @git  = cmd @path, @dot_git
+    @git  = cmd @path, @dot_git, @git_options
 
 
   # Public: Get the commit identity for this repository.
@@ -197,6 +197,39 @@ module.exports = class Repo
     , (err, stdout, stderr) ->
       callback err
 
+  # Public: Add a remote URL.
+  #
+  # name     - String name of the remote.
+  # url      - String url of the remote.
+  # callback - Receives `(err)`
+  #
+  remote_add_url: (name, url, callback) ->
+    @git "remote set-url", {}, ["--add", name, url]
+    , (err, stdout, stderr) ->
+      callback err
+
+  # Public: Set a remote URL.
+  #
+  # name     - String name of the remote.
+  # url      - String url to set in the remote.
+  # callback - Receives `(err)`.
+  #
+  remote_set_url: (name, url, callback) ->
+    @git "remote set-url", {}, [name, url]
+    , (err, stdout, stderr) ->
+      callback err
+
+  # Public: Delete a remote URL.
+  #
+  # name     - String name of the remote.
+  # url      - String url of the remote.
+  # callback - Receives `(err)`
+  #
+  remote_delete_url: (name, url, callback) ->
+    @git "remote set-url", {}, ["--delete", name, url]
+    , (err, stdout, stderr) ->
+      callback err
+
   # Public: `git fetch <name>`.
   #
   # name     - String name of the remote
@@ -238,8 +271,9 @@ module.exports = class Repo
   #
   # callback - Receives `(err, status)`
   #
-  status: (callback) ->
-    return Status(this, callback)
+  status: (options, callback) ->
+    [options, callback] = [callback, options] if !callback;
+    return Status(this, options, callback)
 
   # Public: Show information about files in the index and the
   #         working tree.
@@ -332,6 +366,19 @@ module.exports = class Repo
   # Public: Checkout the treeish.
   checkout: (treeish, callback) ->
     @git "checkout", {}, treeish, callback
+
+  # Public: Clean the git repo by removing untracked files
+  #
+  # options   - The {Object} containing any of the options available to git clean:
+  #   :force  - {Boolean) In the default repo config, clean will not take effect unless this option is given.
+  #   :d      - {Boolean) also removes untracked directories
+  #   :n      - {Boolean) Dry run - don't actually delete, just report what would be deleted
+  #   :quiet  - {Boolean) only report errors
+  # callback  - The {Function} to callback.
+  #
+  clean: (options, callback) ->
+    options ?= {}
+    @git "clean", options, callback
 
   # Public: Reset the git repo.
   #
